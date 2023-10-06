@@ -16,7 +16,7 @@ onms = PyONMS(
     hostname=os.environ.get("onms_host"),
     username=os.environ.get("onms_user"),
     password=os.environ.get("onms_pass"),
-    verify_ssl=False,
+    # verify_ssl=False,
 )
 
 
@@ -125,3 +125,4 @@ if __name__ == "__main__":
             req.add_node(node=new_node, merge=False)
 
     onms.requisitions.update_requisition(requisition=req)
+    # onms.requisitions.import_requisition(name=req.foreign_source, rescan=False)
