@@ -1,5 +1,7 @@
 # nb_script.py
 
+"""Sample script to generate an OpenNMS requisition from NetBox inventory"""
+
 import os
 from typing import List
 
@@ -53,10 +55,10 @@ def get_device_location(device: pynetbox.models.dcim.Devices) -> dict:
 
 
 def convert_device(
-    device: pynetbox.models.dcim.Devices, req: Requisition
+    device: pynetbox.models.dcim.Devices, requisition: Requisition
 ) -> RequisitionNode:
     "Build an OpenNMS RequisitionNode from a Netbox Device"
-    new_node = req.node.get(str(device.id))
+    new_node = requisition.node.get(str(device.id))
     if not new_node:
         new_node = RequisitionNode(foreign_id=str(device.id), node_label=device.name)
     site = nb.dcim.sites.get(device.site.id)
@@ -117,12 +119,12 @@ if __name__ == "__main__":
 
     devices = nb.dcim.devices.all()
 
-    for device in devices:
-        if not device.primary_ip4:
+    for device_node in devices:
+        if not device_node.primary_ip4:
             continue
         else:
-            new_node = convert_device(device=device, req=req)
-            req.add_node(node=new_node, merge=False)
+            new_device = convert_device(device=device_node, requisition=req)
+            req.add_node(node=new_device, merge=False)
 
     onms.requisitions.update_requisition(requisition=req)
     # onms.requisitions.import_requisition(name=req.foreign_source, rescan=False)
